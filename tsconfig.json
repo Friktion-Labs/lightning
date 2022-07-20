@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "moduleResolution": "node",
+      "strictNullChecks": false,
+      "strictFunctionTypes": true,
+      "noImplicitOverride": true,
+      "noUncheckedIndexedAccess": true,
+      "module": "commonjs",
+      "allowJs": true,
+      "skipLibCheck": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "strict": false,
+      "forceConsistentCasingInFileNames": true,
+      "resolveJsonModule": true,
+      "noEmit": true,
+      "isolatedModules": true,
+      "experimentalDecorators": true,
+      "noFallthroughCasesInSwitch": true,
+    }
+  }
+  
