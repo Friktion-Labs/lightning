@@ -10,7 +10,11 @@ Friktion program ID: ```VoLT1mJz1sbnxwq5Fv2SXjdVDgPXrb9tJyC8WpMDkSp```
 
 Can be found here: https://app.friktion.fi/faucet
 
-## Examples:
+## Docs
+
+Full docs can be found at https://docs.friktion.fi/integration/rust-abi
+
+## Examples
 
 The following is an example of a CPI call into the Friktion program calling the deposit instruction. Anchor provides [docs](https://project-serum.github.io/anchor/tutorials/tutorial-3.html) on the syntax used.
 
