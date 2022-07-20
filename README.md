@@ -172,8 +172,3 @@ Keep in mind, the CPI feature must be enabled on "volt-abi" as the following dem
 ```rust
 volt-abi = { version = "0.2.0", features = ["cpi"]}
 ```
-
-
-## Practical Notes:
-
-- vault_token_destination && underlying_token_source accounts must be initialized prior to calling the Deposit instruction. The authorities on those token accounts must be the dao_authority, which practically is a PDA of the invoking program.
