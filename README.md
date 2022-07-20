@@ -1,14 +1,11 @@
-# Friktion (volt) ABI
 
 ## Overview
 
-Provides contexts and instruction functions to interact with Friktion Program via CPI calls
-
-Friktion program ID: ```VoLT1mJz1sbnxwq5Fv2SXjdVDgPXrb9tJyC8WpMDkSp```
+CPI Examples for interacting with Friktion's volt program
 
 ## Devnet Faucets
 
-Can be found here: https://app.friktion.fi/faucet
+Can be found here: http s://app.friktion.fi/faucet
 
 ## Docs
 
