@@ -5,7 +5,7 @@ CPI Examples for interacting with Friktion's volt program
 
 ## Devnet Faucets
 
-Can be found here: http s://app.friktion.fi/faucet
+Can be found here: https://app.friktion.fi/faucet
 
 ## Docs
 
