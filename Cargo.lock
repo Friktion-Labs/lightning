@@ -433,7 +433,7 @@ checksum = "245097e9a4535ee1e3e3931fcfcd55a796a44c643e8596ff6566d68f09b87bbc"
 
 [[package]]
 name = "cpi-examples"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
@@ -1524,9 +1524,9 @@ checksum = "49874b5167b65d7193b8aba1567f5c7d93d001cafc34600cee003eda787e483f"
 
 [[package]]
 name = "volt-abi"
-version = "0.2.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c651aa0c596aa90532a3056633e6f720d6298e20285d32e8627a305a6f3c1e5"
+checksum = "a74eedc879cb83e58340cafd8600e0696057e43719556aff89e0abaf1e6bf7cf"
 dependencies = [
  "anchor-lang",
  "anchor-spl",

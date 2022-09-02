@@ -6,13 +6,15 @@ use anchor_spl::token::TokenAccount;
 #[instruction(
     deposit_amount: u64,
 )]
+// required remaining accounts:
+// PRINCIPAL PROTECTION (Volt 5): PrincipalProtectionContextAccounts
 pub struct DepositExample<'info> {
     #[account(mut, signer)]
     /// CHECK: skip, checked by the volt program
-    pub authority: AccountInfo<'info>,
+    pub payer_authority: AccountInfo<'info>,
 
     /// CHECK: skip, checked by the volt program
-    pub dao_authority: AccountInfo<'info>,
+    pub non_payer_authority: AccountInfo<'info>,
 
     #[account(address=volt_abi::id())]
     /// CHECK: skip, checked by the volt program, will check program id in instruction
@@ -42,12 +44,12 @@ pub struct DepositExample<'info> {
     /// CHECK: skip, checked by the volt program
     pub writer_token_pool: AccountInfo<'info>,
 
-    #[account(mut, token::authority=dao_authority.key())]
+    #[account(mut, token::authority=non_payer_authority.key())]
     // user controlled token account w/ mint == vault mint
     /// CHECK: skip, checked by the volt program
     pub vault_token_destination: Box<Account<'info, TokenAccount>>,
 
-    #[account(mut, token::authority=dao_authority.key())]
+    #[account(mut, token::authority=non_payer_authority.key())]
     // user controlled token account w/ mint == underlying mint
     /// CHECK: skip, checked by the volt program
     pub underlying_token_source: Box<Account<'info, TokenAccount>>,
@@ -98,7 +100,7 @@ pub struct WithdrawExample<'info> {
 
     #[account()]
     /// CHECK: skip, checked by volt program
-    pub dao_authority: AccountInfo<'info>,
+    pub non_payer_authority: AccountInfo<'info>,
 
     /// CHECK: skip, checked by volt program
     pub authority_check: AccountInfo<'info>,
@@ -169,13 +171,18 @@ pub struct WithdrawExample<'info> {
 #[instruction(
     deposit_amount: u64,
 )]
+
+// required remaining accounts:
+// SHORT OPTIONS (Volts 1/2) : NONE
+// ENTROPY (Volts 3/4): EntropyBaseAccountsWithoutBanks
+// PRINCIPAL PROTECTION (Volt 5): PrincipalProtectionContextAccounts
 pub struct DepositWithClaimExample<'info> {
     #[account(mut, signer)]
     /// CHECK: skip, checked by the volt program
     pub authority: AccountInfo<'info>,
 
     /// CHECK: skip, checked by the volt program
-    pub dao_authority: AccountInfo<'info>,
+    pub non_payer_authority: AccountInfo<'info>,
 
     #[account(address=volt_abi::id())]
     /// CHECK: skip, checked by the volt program, will check program id in instruction
@@ -202,12 +209,12 @@ pub struct DepositWithClaimExample<'info> {
     /// CHECK: skip, checked by the volt program
     pub writer_token_pool: AccountInfo<'info>,
 
-    #[account(mut, token::authority=dao_authority.key())]
+    #[account(mut, token::authority=non_payer_authority.key())]
     // user controlled token account w/ mint == vault mint
     /// CHECK: skip, checked by the volt program
     pub vault_token_destination: Box<Account<'info, TokenAccount>>,
 
-    #[account(mut, token::authority=dao_authority.key())]
+    #[account(mut, token::authority=non_payer_authority.key())]
     // user controlled token account w/ mint == underlying mint
     /// CHECK: skip, checked by the volt program
     pub underlying_token_source: Box<Account<'info, TokenAccount>>,
@@ -260,7 +267,7 @@ pub struct WithdrawWithClaimExample<'info> {
 
     #[account()]
     /// CHECK: skip, checked by volt program
-    pub dao_authority: AccountInfo<'info>,
+    pub non_payer_authority: AccountInfo<'info>,
 
     /// CHECK: skip, checked by volt program
     pub authority_check: AccountInfo<'info>,

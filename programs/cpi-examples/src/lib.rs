@@ -6,7 +6,7 @@ pub use crate::contexts::*;
 declare_id!("DAo2pDtpiBFDu4TTiv2WggP6PfQ6FnKqwSRYxpMjyuV2");
 
 fn get_authority() -> (Pubkey, u8) {
-    return Pubkey::find_program_address(&[b"daoProgramAuthority" as &[u8]], &crate::id());
+    Pubkey::find_program_address(&[b"daoProgramAuthority" as &[u8]], &crate::id())
 }
 
 #[program]
@@ -20,12 +20,12 @@ pub mod cpi_examples {
         let (_, bump) = get_authority();
         let base_seeds = &[b"daoProgramAuthority" as &[u8], &[bump]];
         let seeds = [&base_seeds[..]];
-        let cpi_ctx = CpiContext::new_with_signer(
+        let mut cpi_ctx = CpiContext::new_with_signer(
             ctx.accounts.volt_program_id.clone(),
             volt_abi::cpi::accounts::Deposit {
-                authority: ctx.accounts.authority.to_account_info(),
-                dao_authority: ctx.accounts.dao_authority.to_account_info(),
-                authority_check: ctx.accounts.dao_authority.to_account_info(),
+                payer_authority: ctx.accounts.payer_authority.to_account_info(),
+                non_payer_authority: ctx.accounts.non_payer_authority.to_account_info(),
+                authority_check: ctx.accounts.non_payer_authority.to_account_info(),
                 vault_mint: ctx.accounts.vault_mint.to_account_info(),
                 volt_vault: ctx.accounts.volt_vault.to_account_info(),
                 vault_authority: ctx.accounts.vault_authority.to_account_info(),
@@ -33,22 +33,20 @@ pub mod cpi_examples {
                 whitelist: ctx.accounts.whitelist.to_account_info(),
                 deposit_pool: ctx.accounts.deposit_pool.to_account_info(),
                 writer_token_pool: ctx.accounts.writer_token_pool.to_account_info(),
-                vault_token_destination: ctx.accounts.vault_token_destination.to_account_info(),
-                underlying_token_source: ctx.accounts.underlying_token_source.to_account_info(),
+                user_vault_tokens: ctx.accounts.vault_token_destination.to_account_info(),
+                user_ul_tokens: ctx.accounts.underlying_token_source.to_account_info(),
                 round_info: ctx.accounts.round_info.to_account_info(),
                 round_volt_tokens: ctx.accounts.round_volt_tokens.to_account_info(),
                 round_underlying_tokens: ctx.accounts.round_underlying_tokens.to_account_info(),
                 pending_deposit_info: ctx.accounts.pending_deposit_info.to_account_info(),
-                entropy_program: ctx.accounts.entropy_program.to_account_info(),
-                entropy_group: ctx.accounts.entropy_group.to_account_info(),
-                entropy_cache: ctx.accounts.entropy_cache.to_account_info(),
-                entropy_account: ctx.accounts.entropy_account.to_account_info(),
+
                 epoch_info: ctx.accounts.epoch_info.to_account_info(),
                 system_program: ctx.accounts.system_program.to_account_info(),
                 token_program: ctx.accounts.token_program.to_account_info(),
             },
             &seeds,
         );
+        cpi_ctx.remaining_accounts = ctx.remaining_accounts.to_vec();
 
         volt_abi::cpi::deposit(cpi_ctx, deposit_amount).unwrap();
         Ok(())
@@ -64,9 +62,9 @@ pub mod cpi_examples {
         let cpi_ctx = CpiContext::new_with_signer(
             ctx.accounts.volt_program_id.clone(),
             volt_abi::cpi::accounts::Withdraw {
-                authority: ctx.accounts.authority.to_account_info(),
-                dao_authority: ctx.accounts.dao_authority.to_account_info(),
-                authority_check: ctx.accounts.dao_authority.to_account_info(),
+                payer_authority: ctx.accounts.authority.to_account_info(),
+                non_payer_authority: ctx.accounts.non_payer_authority.to_account_info(),
+                authority_check: ctx.accounts.non_payer_authority.to_account_info(),
                 vault_mint: ctx.accounts.vault_mint.to_account_info(),
                 volt_vault: ctx.accounts.volt_vault.to_account_info(),
                 vault_authority: ctx.accounts.vault_authority.to_account_info(),
@@ -102,12 +100,13 @@ pub mod cpi_examples {
         let (_, bump) = get_authority();
         let base_seeds = &[b"daoProgramAuthority" as &[u8], &[bump]];
         let seeds = [&base_seeds[..]];
-        let cpi_ctx = CpiContext::new_with_signer(
+        let mut cpi_ctx = CpiContext::new_with_signer(
             ctx.accounts.volt_program_id.clone(),
             volt_abi::cpi::accounts::DepositWithClaim {
-                authority: ctx.accounts.authority.to_account_info(),
-                dao_authority: ctx.accounts.dao_authority.to_account_info(),
-                authority_check: ctx.accounts.dao_authority.to_account_info(),
+                payer_authority: ctx.accounts.authority.to_account_info(),
+                non_payer_authority: ctx.accounts.non_payer_authority.to_account_info(),
+                sol_transfer_authority: ctx.accounts.authority.to_account_info(),
+                authority_check: ctx.accounts.non_payer_authority.to_account_info(),
                 vault_mint: ctx.accounts.vault_mint.to_account_info(),
                 volt_vault: ctx.accounts.volt_vault.to_account_info(),
                 vault_authority: ctx.accounts.vault_authority.to_account_info(),
@@ -120,9 +119,6 @@ pub mod cpi_examples {
                 round_underlying_tokens: ctx.accounts.round_underlying_tokens.to_account_info(),
                 pending_deposit_info: ctx.accounts.pending_deposit_info.to_account_info(),
                 epoch_info: ctx.accounts.epoch_info.to_account_info(),
-                system_program: ctx.accounts.system_program.to_account_info(),
-                token_program: ctx.accounts.token_program.to_account_info(),
-                sol_transfer_authority: ctx.accounts.authority.to_account_info(),
                 pending_deposit_round_info: ctx
                     .accounts
                     .pending_deposit_round_info
@@ -135,9 +131,12 @@ pub mod cpi_examples {
                     .accounts
                     .pending_deposit_round_underlying_tokens
                     .to_account_info(),
+                system_program: ctx.accounts.system_program.to_account_info(),
+                token_program: ctx.accounts.token_program.to_account_info(),
             },
             &seeds,
         );
+        cpi_ctx.remaining_accounts = ctx.remaining_accounts.to_vec();
 
         volt_abi::cpi::deposit_with_claim(cpi_ctx, deposit_amount, false).unwrap();
         Ok(())
@@ -153,9 +152,9 @@ pub mod cpi_examples {
         let cpi_ctx = CpiContext::new_with_signer(
             ctx.accounts.volt_program_id.clone(),
             volt_abi::cpi::accounts::WithdrawWithClaim {
-                authority: ctx.accounts.authority.to_account_info(),
-                dao_authority: ctx.accounts.dao_authority.to_account_info(),
-                authority_check: ctx.accounts.dao_authority.to_account_info(),
+                payer_authority: ctx.accounts.authority.to_account_info(),
+                non_payer_authority: ctx.accounts.non_payer_authority.to_account_info(),
+                authority_check: ctx.accounts.non_payer_authority.to_account_info(),
                 vault_mint: ctx.accounts.vault_mint.to_account_info(),
                 volt_vault: ctx.accounts.volt_vault.to_account_info(),
                 vault_authority: ctx.accounts.vault_authority.to_account_info(),
@@ -219,7 +218,7 @@ pub mod cpi_examples {
             &seeds,
         );
 
-        volt_abi::cpi::claim_pending(cpi_ctx).unwrap();
+        volt_abi::cpi::claim_pending_deposit(cpi_ctx).unwrap();
         Ok(())
     }
 
@@ -281,7 +280,6 @@ pub mod cpi_examples {
                 round_underlying_tokens: ctx.accounts.round_underlying_tokens.to_account_info(),
                 round_info: ctx.accounts.round_info.to_account_info(),
                 epoch_info: ctx.accounts.epoch_info.to_account_info(),
-                rent: ctx.accounts.rent.to_account_info(),
                 system_program: ctx.accounts.system_program.to_account_info(),
                 token_program: ctx.accounts.token_program.to_account_info(),
             },
@@ -312,7 +310,6 @@ pub mod cpi_examples {
                 vault_token_destination: ctx.accounts.vault_token_destination.to_account_info(),
                 round_info: ctx.accounts.round_info.to_account_info(),
                 epoch_info: ctx.accounts.epoch_info.to_account_info(),
-                rent: ctx.accounts.rent.to_account_info(),
             },
             &seeds,
         );
